@@ -4,6 +4,7 @@ import { Tool, Position, ImageObject, TextObject } from '../types';
 interface CanvasProps {
   tool: Tool;
   color: string;
+  backgroundColor: string;
   lineWidth: number;
   fontSize: number;
   isDrawing: boolean;
@@ -19,6 +20,7 @@ interface CanvasProps {
 export default function Canvas({
   tool,
   color,
+  backgroundColor,
   lineWidth,
   fontSize,
   isDrawing,
@@ -36,6 +38,7 @@ export default function Canvas({
   const [resizing, setResizing] = useState(false);
   const [inputPosition, setInputPosition] = useState<Position | null>(null);
 
+  // 更新背景顏色的 effect
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -43,11 +46,11 @@ export default function Canvas({
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    // Clear and draw white background
-    ctx.fillStyle = '#ffffff';
+    // 填充背景顏色
+    ctx.fillStyle = backgroundColor;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // Draw all images
+    // 重繪所有圖片
     images.forEach((img) => {
       ctx.drawImage(img.element, img.x, img.y, img.width, img.height);
       if (img.isSelected) {
@@ -55,7 +58,7 @@ export default function Canvas({
       }
     });
 
-    // Draw all texts
+    // 重繪所有文字
     texts.forEach((text) => {
       ctx.font = `${text.fontSize}px Arial`;
       ctx.fillStyle = text.color;
@@ -65,7 +68,7 @@ export default function Canvas({
         drawSelectionBox(ctx, text.x, text.y - text.fontSize, metrics.width, text.fontSize);
       }
     });
-  }, [images, texts]);
+  }, [backgroundColor, images, texts]);
 
   const drawSelectionBox = (
     ctx: CanvasRenderingContext2D,
@@ -94,7 +97,7 @@ export default function Canvas({
     const y = e.clientY - rect.top;
 
     if (tool === 'select') {
-      // Check for resize handle first
+      // 檢查是否點擊調整大小的控制點
       if (selectedObject && selectedIndex !== -1) {
         const obj = selectedObject === 'image' 
           ? images[selectedIndex] 
@@ -117,10 +120,10 @@ export default function Canvas({
         }
       }
 
-      // Check for object selection
+      // 檢查物件選擇
       let found = false;
       
-      // Check images first
+      // 首先檢查圖片
       images.forEach((img, index) => {
         if (
           x >= img.x &&
@@ -140,7 +143,7 @@ export default function Canvas({
       });
 
       if (!found) {
-        // Check texts
+        // 檢查文字
         texts.forEach((text, index) => {
           const ctx = canvas.getContext('2d');
           if (!ctx) return;
@@ -183,7 +186,7 @@ export default function Canvas({
 
       ctx.beginPath();
       ctx.moveTo(x, y);
-      ctx.strokeStyle = tool === 'eraser' ? '#ffffff' : color;
+      ctx.strokeStyle = tool === 'eraser' ? backgroundColor : color;
       ctx.lineWidth = lineWidth;
       ctx.lineCap = 'round';
     }
@@ -260,7 +263,12 @@ export default function Canvas({
       const tempCtx = tempCanvas.getContext('2d');
       if (!tempCtx) return;
 
+      // 繪製當前畫布內容到臨時畫布
+      tempCtx.fillStyle = backgroundColor;
+      tempCtx.fillRect(0, 0, canvas.width, canvas.height);
       tempCtx.drawImage(canvas, 0, 0);
+      
+      // 繪製新的形狀
       tempCtx.strokeStyle = color;
       tempCtx.lineWidth = lineWidth;
       tempCtx.beginPath();
@@ -280,6 +288,8 @@ export default function Canvas({
       }
 
       tempCtx.stroke();
+      
+      // 更新主畫布
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       ctx.drawImage(tempCanvas, 0, 0);
     }

@@ -6,6 +6,7 @@ import type { Tool, ImageObject, TextObject } from '../types';
 export default function Editor() {
   const [tool, setTool] = useState<Tool>('pencil');
   const [color, setColor] = useState('#000000');
+  const [backgroundColor, setBackgroundColor] = useState('#ffffff');
   const [lineWidth, setLineWidth] = useState(2);
   const [fontSize, setFontSize] = useState(24);
   const [isDrawing, setIsDrawing] = useState(false);
@@ -60,6 +61,8 @@ export default function Editor() {
           setTool={setTool}
           color={color}
           setColor={setColor}
+          backgroundColor={backgroundColor}
+          setBackgroundColor={setBackgroundColor}
           lineWidth={lineWidth}
           setLineWidth={setLineWidth}
           fontSize={fontSize}
@@ -70,6 +73,7 @@ export default function Editor() {
         <Canvas
           tool={tool}
           color={color}
+          backgroundColor={backgroundColor}
           lineWidth={lineWidth}
           fontSize={fontSize}
           isDrawing={isDrawing}

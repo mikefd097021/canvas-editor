@@ -7,6 +7,8 @@ interface ToolbarProps {
   setTool: (tool: Tool) => void;
   color: string;
   setColor: (color: string) => void;
+  backgroundColor: string;
+  setBackgroundColor: (color: string) => void;
   lineWidth: number;
   setLineWidth: (width: number) => void;
   fontSize: number;
@@ -20,6 +22,8 @@ export default function Toolbar({
   setTool,
   color,
   setColor,
+  backgroundColor,
+  setBackgroundColor,
   lineWidth,
   setLineWidth,
   fontSize,
@@ -84,13 +88,26 @@ export default function Toolbar({
         >
           <Eraser size={20} />
         </button>
-        <input
-          type="color"
-          value={color}
-          onChange={(e) => setColor(e.target.value)}
-          className="w-8 h-8 rounded cursor-pointer"
-          title="Color"
-        />
+        <div className="flex items-center gap-2">
+          <label className="text-xs text-gray-600">Drawing Color</label>
+          <input
+            type="color"
+            value={color}
+            onChange={(e) => setColor(e.target.value)}
+            className="w-8 h-8 rounded cursor-pointer"
+            title="Drawing Color"
+          />
+        </div>
+        <div className="flex items-center gap-2">
+          <label className="text-xs text-gray-600">Background</label>
+          <input
+            type="color"
+            value={backgroundColor}
+            onChange={(e) => setBackgroundColor(e.target.value)}
+            className="w-8 h-8 rounded cursor-pointer"
+            title="Background Color"
+          />
+        </div>
         <div className="flex flex-col">
           <label className="text-xs text-gray-600">Line Width</label>
           <input
